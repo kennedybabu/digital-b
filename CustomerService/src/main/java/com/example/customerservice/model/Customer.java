@@ -1,12 +1,14 @@
-package model;
+package com.example.customerservice.model;
 
 
+import com.example.customerservice.util.KycStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import util.KycStatus;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 
@@ -59,9 +61,12 @@ public class Customer {
     @Column(name = "request_fingerprint", nullable = false)
     private String requestFingerprint;
 
+
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDate updatedAt;
 

@@ -1,11 +1,11 @@
-package dto;
+package com.example.customerservice.dto;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import util.KycStatus;
+import com.example.customerservice.util.KycStatus;
 
 import java.time.LocalDateTime;
 
@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CutsomerCreatedResponse {
+public class CustomerCreatedResponse {
     private String externalId;
-    private KycStatus KycStatus;
+    private KycStatus kycStatus;
     private Integer version;
     private LocalDateTime createdAt;
 }

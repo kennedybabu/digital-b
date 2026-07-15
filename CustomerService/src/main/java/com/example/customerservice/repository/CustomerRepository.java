@@ -1,6 +1,6 @@
-package repository;
+package com.example.customerservice.repository;
 
-import model.Customer;
+import com.example.customerservice.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package dto;
+package com.example.customerservice.dto;
 
 
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ public class CustomerRequest {
     @Size(max=254)
     private String email;
 
-    @Pattern(regexp="^\\+?[1-9]\\d{1,10}$", message="E.164 format")
+    @Pattern(regexp="^(?:\\+?254|0)?[71]\\d{8}$", message="Invalid Kenyan phone number format")
     private String phone;
 
     private String address;

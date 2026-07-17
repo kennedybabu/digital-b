@@ -2,15 +2,16 @@ package com.example.customerservice.service;
 
 
 import com.example.customerservice.commons.exception.ConflictException;
-import com.example.customerservice.dto.CustomerRequest;
+import com.example.customerservice.commons.exception.ResourceNotFoundException;
 import com.example.customerservice.dto.CustomerCreatedResponse;
-import com.example.customerservice.util.Fingerprints;
-import lombok.RequiredArgsConstructor;
+import com.example.customerservice.dto.CustomerRequest;
 import com.example.customerservice.mapper.CustomerMapper;
 import com.example.customerservice.model.Customer;
-import org.springframework.stereotype.Service;
 import com.example.customerservice.repository.CustomerRepository;
+import com.example.customerservice.util.Fingerprints;
 import com.example.customerservice.util.KycStatus;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
@@ -33,7 +34,17 @@ public class CustomerService {
                 return customerMapper.toCreateResponse(existingCustomer);
             }
             throw new ConflictException("Same externalID used with different data");
-//            System.out.println("Conflict discovered. This ExternalID exists");
+        }
+
+        //-------Fast path: same emailId already present?
+        Optional<Customer> byEmail = customerRepository.findByEmail(request.getEmail());
+        if(byEmail.isPresent()) {
+            Customer existingCustomer = byEmail.get();
+            if(p.equals(existingCustomer.getRequestFingerprint())) {
+                return customerMapper.toCreateResponse(existingCustomer);
+            }
+
+            throw new ConflictException("Same email address used with different data");
         }
 
         Customer entity = customerMapper.toEntity(request);
@@ -42,5 +53,23 @@ public class CustomerService {
         entity.setRequestFingerprint("abc");
         Customer saved = customerRepository.saveAndFlush(entity);
         return customerMapper.toCreateResponse(saved);
+    }
+
+    public Integer updateKycStatus(String id, String kycStatus) {
+        Customer customer = customerRepository.findByExternalId(id).
+                orElseThrow(()-> new ResourceNotFoundException("Customer not found with externalId: " + id));
+
+        if("VERIFIED".equalsIgnoreCase(kycStatus)){
+            customer.setKycStatus(KycStatus.VERIFIED);
+            customer.setActive(true);
+
+            //----create customers login credentials------------
+
+            customerRepository.save(customer);
+        } else {
+            customer.setKycStatus(KycStatus.REJECTED);
+            customerRepository.save(customer);
+        }
+        return customer.getVersion();
     }
 }

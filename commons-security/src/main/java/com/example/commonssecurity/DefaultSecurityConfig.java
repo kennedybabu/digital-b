@@ -40,6 +40,7 @@ public class DefaultSecurityConfig {
                                 "/actuator/health",
                                 "/api/v1/health",
                                 "/api/v1/customer/register",
+                                "/api/v1/test/public",
                                 "/.well-known/jwks.json"
                         ).permitAll()
                         .anyRequest().authenticated()
